@@ -1,0 +1,34 @@
+---
+# Installs and configures ufw, which in turn uses iptables for firewall management
+
+# ufw includes sensible icmp defaults
+- name: Install ufw
+  apt: pkg=ufw state=present
+
+- name: Deny everything
+  ufw: policy=deny
+
+- name: Set firewall rule for DNS
+  ufw: rule=allow port=domain
+
+- name: Set firewall rule for mosh
+  ufw: rule=allow port=60000:61000 proto=udp
+
+- name: Set firewall rules for web traffic and SSH
+  ufw: rule=allow port={{ item }} proto=tcp
+  with_items:
+    - http
+    - https
+    - ssh
+
+- name: Enable UFW
+  ufw: state=enabled
+
+- name: Check config of ufw
+  command: cat /etc/ufw/ufw.conf
+  register: ufw_config
+  changed_when: False  # never report as "changed"
+
+- name: Disable logging (workaround for known bug in Debian 7)
+  ufw: logging=off
+  when: "ansible_lsb['codename'] == 'wheezy' and 'LOGLEVEL=off' not in ufw_config.stdout"

@@ -1,0 +1,26 @@
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/dbconfig-install' value='true' vtype='boolean'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/db/app-user' value='phpmyadmin' vtype='string'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/db/dbname' value='phpmyadmin' vtype='string'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/mysql/method' value='unix socket' vtype='string'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/mysql/admin-user' value='root' vtype='string'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/mysql/admin-pass' value='{{mysql_root_password}}' vtype='password'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/mysql/app-pass' value='{{mysql_root_password}}' vtype='password'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/reconfigure-webserver' value='apache2' vtype='multiselect'
+
+  - name: Install phpmyadmin
+    action: apt name=phpmyadmin state=present

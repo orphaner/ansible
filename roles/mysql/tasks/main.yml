@@ -1,42 +1,30 @@
 ---
   - name: install mysql-server
     action: apt name=mysql-server
-    notify:
-      - mysql_secure_installation
+    register: test_install
+
+  - name: mysql_secure_installation
+    action: template src=mysql_secure_installation.j2 dest=/tmp/mysql_secure_installation owner=root group=root mode=0600
+    when: test_install.changed
+
+  - name: launch mysql_secure_installation
+    action: shell cat /tmp/mysql_secure_installation | mysql_secure_installation
+    when: test_install.changed
+
+  - name: delete mysql_secure_installation
+    action: file dest=/tmp/mysql_secure_installation state=absent
+    when: test_install.changed
 
   - name: write conf.d/mysqld.cnf
     action: template src=mysqld.cnf.j2 dest=/etc/mysql/conf.d/mysqld.cnf
-    notify:
-      - restart mysql
+    notify: restart mysql
 
   - name: write conf.d/client.cnf
     action: template src=client.cnf.j2 dest=/etc/mysql/conf.d/client.cnf
-    notify:
-      - restart mysql
+    notify: restart mysql
 
-  - name: debconf for pma
-    debconf: name=phpmyadmin question='phpmyadmin/dbconfig-install' value='true' vtype='boolean'
+  - name: restart mysql
+    action: service name=mysql state=restarted enabled=yes
+    when: test_install.changed
 
-  - name: debconf for pma
-    debconf: name=phpmyadmin question='phpmyadmin/db/app-user' value='phpmyadmin' vtype='string'
-
-  - name: debconf for pma
-    debconf: name=phpmyadmin question='phpmyadmin/db/db-name' value='phpmyadmin' vtype='string'
-
-  - name: debconf for pma
-    debconf: name=phpmyadmin question='phpmyadmin/mysql/method' value='unix socket' vtype='string'
-
-  - name: debconf for pma
-    debconf: name=phpmyadmin question='phpmyadmin/mysql/admin-user' value='root' vtype='string'
-
-  - name: debconf for pma
-    debconf: name=phpmyadmin question='phpmyadmin/mysql/admin-pass' value='{{mysql_root_password}}' vtype='password'
-
-  - name: debconf for pma
-    debconf: name=phpmyadmin question='phpmyadmin/mysql/app-pass' value='{{mysql_root_password}}' vtype='password'
-
-  - name: debconf for pma
-    debconf: name=phpmyadmin question='phpmyadmin/reconfigure-webserver' value='apache2' vtype='multiselect'
-
-  - name: Install phpmyadmin
-    action: apt name=phpmyadmin state=present
+  - include: phpmyadmin.yml tags=phpmyadmin

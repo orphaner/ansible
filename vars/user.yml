@@ -9,9 +9,12 @@ domain: beroot.local
 main_user_name: nicolas
 encfs_password: password
 
-# database
-db_admin_username: postgres
-db_admin_password: password
+# mysql
+mysql_utf8: true
+mysqld:
+  bind_address: 127.0.0.1
+  key_buffer: 16M
+mysql_root_password: password
 
 # ircbouncer
 irc_nick: TODO

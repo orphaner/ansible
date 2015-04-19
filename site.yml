@@ -12,7 +12,8 @@
 
   roles:
     - common
-    - mailserver
+    - { role : mysql, tags: ['mysql'] }
+    #- mailserver
     #- webmail
     #- blog
     #- ircbouncer

@@ -52,9 +52,9 @@
 - name: Apticron email configuration
   template: src=apticron.conf.j2 dest=/etc/apticron/apticron.conf
 
-- name: Disable default Apache site
-  command: a2dissite 000-default removes=/etc/apache2/sites-enabled/000-default
-  notify: restart apache
+# - name: Disable default Apache site
+#   command: a2dissite 000-default removes=/etc/apache2/sites-enabled/000-default
+#   notify: restart apache
 
 - name: Enable Apache headers module
   command: a2enmod headers creates=/etc/apache2/mods-enabled/headers.load

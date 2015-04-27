@@ -14,11 +14,17 @@
 #   notify: import sql postfix
 
 - name: Create database for mail server
-  mysql_user: login_user={{ db_admin_username }} login_password="{{ db_admin_password }}" name={{ mail_db_database }} password={{ mail_db_password }} priv=*.*:ALL,GRANT state=present
+  mysql_db: login_user={{ db_admin_username }} login_password="{{ db_admin_password }}" name={{ mail_db_database }} target=/etc/postfix/import.sql state=present
+
+- name: Create user for mail server
+  mysql_user: login_user={{ db_admin_username }} login_password="{{ db_admin_password }}" name={{ mail_db_database }} password={{ mail_db_password }} priv={{ mail_db_database }}.*:ALL state=present
 
 - name: Copy import.sql
-  template: src=qsdfqsfdqmailserver.sql.j2 dest=/etc/postfix/import.sql owner=root group=root mode=0600
-  notify: import sql postfix
+  template: src=mailserver.sql.j2 dest=/etc/postfix/import.sql owner=root group=root mode=0600
+  #notify: import sql postfix
+
+- name: Import base schema
+  mysql_db: login_user={{ mail_db_username }} login_password="{{ mail_db_password }}" name={{ mail_db_database }} state=import target=/etc/postfix/import.sql
 
 - name: Create postfix maps directory
   file: path=/etc/postfix/maps state=directory owner=root group=root

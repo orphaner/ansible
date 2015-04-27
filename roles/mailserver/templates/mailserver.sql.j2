@@ -1,9 +1,3 @@
--- If tables are not dropped, have to truncate before insert or use "insert or replace" (not postgres compatible)
-
--- DROP TABLE IF EXISTS "virtual_users";
--- DROP TABLE IF EXISTS "virtual_aliases";
--- DROP TABLE IF EXISTS "virtual_domains";
-
 CREATE TABLE IF not exists `virtual_domains` (
        `id` int(11) NOT NULL auto_increment,
        `name` varchar(50) NOT NULL,
@@ -35,25 +29,30 @@ CREATE TABLE `virtual_aliases` (
 
 CREATE INDEX source_idx ON virtual_aliases (source);
 
-exit;
 
 {% for virtual_domain in mail_virtual_domains %}
-INSERT INTO "virtual_domains" ("id", "name")
-        VALUES ('{{ virtual_domain.pk_id }}', '{{ virtual_domain.name }}');
+INSERT INTO virtual_domains (`name`)
+VALUES (
+       "{{ virtual_domain.name }}"
+);
 {% endfor %}
 
 {% for virtual_user in mail_virtual_users %}
-INSERT INTO "virtual_users"  ("domain_id", "password" , "email")
-	VALUES (
-		'{{ virtual_user.domain_pk_id }}',
-		'{{ virtual_user.password_hash }}',
-		'{{ virtual_user.account }}@{{ virtual_user.domain }}'
-	);
+INSERT INTO virtual_users (`domain_id`, `password`, `email`)
+VALUES (
+       (select id from virtual_domains where name='{{ domain }}'),
+       "{{ virtual_user.password_hash }}",
+       "{{ virtual_user.account }}@{{ virtual_user.domain }}"
+);
 {% endfor %}
 
 {% if mail_virtual_aliases is defined %}
 {% for virtual_alias in mail_virtual_aliases %}
-INSERT INTO "virtual_aliases" ("domain_id", "source", "destination")
-    VALUES ('{{ virtual_alias.domain_pk_id }}', '{{ virtual_alias.source }}', '{{virtual_alias.destination }}');
+INSERT INTO virtual_aliases (`domain_id`, `source`, `destination`)
+VALUES (
+       (select id from virtual_domains where name='{{ domain }}'),
+       "{{ virtual_alias.source }}",
+       "{{virtual_alias.destination }}"
+);
 {% endfor %}
 {% endif %}

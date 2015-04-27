@@ -13,7 +13,7 @@
   roles:
     - common
     - { role : mysql, tags: ['mysql'] }
-    #- mailserver
+    - { role : mailserver, tags: ['mailserver'] }
     #- webmail
     #- blog
     #- ircbouncer

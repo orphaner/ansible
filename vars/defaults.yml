@@ -42,7 +42,7 @@ collectd_librato_api_token: "" # (optional)
 google_auth_version: 1.0
 
 # database
-db_admin_username: 'postgres'
+db_admin_username: 'root'
 # db_admin_password: (required)
 
 # ircbouncer
@@ -57,7 +57,7 @@ znc_version: 1.4
 # mailserver
 mail_server_hostname: "mail.{{ domain }}"
 mail_server_autoconfig_hostname: "autoconfig.{{ domain }}"
-mail_db_username: mailuser
+mail_db_username: mailserver
 # mail_db_password: (required)
 mail_db_database: mailserver
 # mail_virtual_domains: (required)

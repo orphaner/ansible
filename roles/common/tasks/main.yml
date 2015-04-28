@@ -28,11 +28,11 @@
     - mosh
     - multitail
     - python-software-properties
-    - ruby1.9.3
+    - ruby
     - screen
     - sudo
     - tree
-    - update-notifier-common
+    #- update-notifier-common
     - vim
     - weechat
     - zsh
@@ -61,7 +61,10 @@
   notify: restart apache
 
 - name: Set ServerName for Apache
-  template: src=fqdn.j2 dest=/etc/apache2/conf.d/fqdn
+  template: src=fqdn.j2 dest=/etc/apache2/conf-available/fqdn.conf
+
+- name: Enable override configurations
+  command: a2enconf fqdn
   notify: restart apache
 
 #- name: Create decrypted directory (even if encfs is not used)

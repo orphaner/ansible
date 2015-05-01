@@ -93,9 +93,9 @@ inet_interfaces = all
 # dovecot db
 virtual_transport = dovecot
 dovecot_destination_recipient_limit = 1
-virtual_mailbox_domains = pgsql:/etc/postfix/pgsql-virtual-mailbox-domains.cf
-virtual_mailbox_maps = pgsql:/etc/postfix/pgsql-virtual-mailbox-maps.cf
-virtual_alias_maps = pgsql:/etc/postfix/pgsql-virtual-alias-maps.cf
+virtual_mailbox_domains = mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf
+virtual_mailbox_maps = mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf
+virtual_alias_maps = mysql:/etc/postfix/mysql-virtual-alias-maps.cf
 local_recipient_maps = $virtual_mailbox_maps
 
 # OpenDKIM
@@ -104,10 +104,10 @@ non_smtpd_milters = $smtpd_milters
 milter_default_action = accept
 
 # new settings for dspam: only scan one mail at a time, localhost doesn't get scanned, everything else does
-dspam_destination_recipient_limit = 1
+#dspam_destination_recipient_limit = 1
 smtpd_client_restrictions =
   permit_sasl_authenticated
-  check_client_access pcre:/etc/postfix/dspam_filter_access
+#  check_client_access pcre:/etc/postfix/dspam_filter_access
 
 # Postscreen
 postscreen_access_list = permit_mynetworks

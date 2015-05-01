@@ -10,6 +10,7 @@
 # ==========================================================================
 #smtp      inet  n       -       -       -       -       smtpd
 smtp       inet  n       -       -       -       1       postscreen
+    -o content_filter=spamassassin
 smtpd      pass  -       -       -       -       -       smtpd
 dnsblog    unix  -       -       -       -       0       dnsblog
 tlsproxy   unix  -       -       -       -       0       tlsproxy
@@ -37,6 +38,8 @@ smtps     inet  n       -       -       -       -       smtpd
   -o smtpd_client_restrictions=permit_sasl_authenticated,reject_unauth_destination,reject
   -o smtpd_sasl_security_options=noanonymous,noplaintext
   -o smtpd_sasl_tls_security_options=noanonymous
+  -o content_filter=spamassassin
+
 
 
 #628       inet  n       -       -       -       -       qmqpd
@@ -125,7 +128,9 @@ mailman   unix  -       n       n       -       -       pipe
   flags=FR user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
   ${nexthop} ${user}
 # spam protection
-dspam     unix  -       n       n       -       10      pipe
-  flags=Ru user=dspam argv=/usr/bin/dspam --deliver=innocent,spam --user ${user}@${domain} -i -f $sender -- $recipient
+spamassassin unix -     n       n       -       -       pipe
+  user=spamd argv=/usr/bin/spamc -f -e  /usr/sbin/sendmail -oi -f ${sender} ${recipient}
+#dspam     unix  -       n       n       -       10      pipe
+#  flags=Ru user=dspam argv=/usr/bin/dspam --deliver=innocent,spam --user ${user}@${domain} -i -f $sender -- $recipient
 dovecot   unix  -       n       n       -       -       pipe
   flags=DRhu user=vmail:vmail argv=/usr/lib/dovecot/dovecot-lda -f ${sender} -d ${user}@${nexthop}

@@ -1,0 +1,5 @@
+- name: Install spamassassin
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - dovecot-antispam
+    - spamassassin

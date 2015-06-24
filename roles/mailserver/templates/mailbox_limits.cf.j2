@@ -1,0 +1,5 @@
+user = {{ mail_db_username }}
+password = {{ mail_db_password }}
+hosts = localhost
+dbname = {{ mail_db_database }}
+query = SELECT quota FROM mailbox m INNER JOIN domain d ON m.domain=d.domain WHERE m.username='%s' AND m.active = true AND d.active = true

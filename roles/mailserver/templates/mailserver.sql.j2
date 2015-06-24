@@ -1,58 +1,152 @@
-CREATE TABLE IF not exists `virtual_domains` (
-       `id` int(11) NOT NULL auto_increment,
-       `name` varchar(50) NOT NULL,
-       PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+#
+# Postfix Admin 2.3.7
+# Date: Fri May 1 18:28:47 CEST 2015
+#
+CREATE TABLE `admin` (
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Postfix Admin - Virtual Admins';
 
-CREATE UNIQUE INDEX name_idx ON virtual_domains (name);
+CREATE TABLE `alias` (
+  `address` varchar(255) NOT NULL,
+  `goto` text NOT NULL,
+  `domain` varchar(255) NOT NULL,
+  `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`address`),
+  KEY `domain` (`domain`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Postfix Admin - Virtual Aliases';
 
-CREATE TABLE if not exists `virtual_users` (
-       `id` int(11) NOT NULL auto_increment,
-       `domain_id` int(11) NOT NULL,
-       `password` varchar(128) NOT NULL,
-       `email` varchar(100) NOT NULL,
-       PRIMARY KEY (`id`),
-       UNIQUE KEY `email` (`email`),
-       FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `alias_domain` (
+  `alias_domain` varchar(255) NOT NULL,
+  `target_domain` varchar(255) NOT NULL,
+  `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`alias_domain`),
+  KEY `active` (`active`),
+  KEY `target_domain` (`target_domain`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Postfix Admin - Domain Aliases';
 
+CREATE TABLE `config` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `value` varchar(20) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='PostfixAdmin settings';
 
+CREATE TABLE `domain` (
+  `domain` varchar(255) NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8 NOT NULL,
+  `aliases` int(10) NOT NULL DEFAULT '0',
+  `mailboxes` int(10) NOT NULL DEFAULT '0',
+  `maxquota` bigint(20) NOT NULL DEFAULT '0',
+  `quota` bigint(20) NOT NULL DEFAULT '0',
+  `transport` varchar(255) NOT NULL,
+  `backupmx` tinyint(1) NOT NULL DEFAULT '0',
+  `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`domain`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Postfix Admin - Virtual Domains';
 
-CREATE TABLE `virtual_aliases` (
-       `id` int(11) NOT NULL auto_increment,
-       `domain_id` int(11) NOT NULL,
-       `source` varchar(100) NOT NULL,
-       `destination` varchar(100) NOT NULL,
-       PRIMARY KEY (`id`),
-       FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `domain_admins` (
+  `username` varchar(255) NOT NULL,
+  `domain` varchar(255) NOT NULL,
+  `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  KEY `username` (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Postfix Admin - Domain Admins';
 
-CREATE INDEX source_idx ON virtual_aliases (source);
+CREATE TABLE `fetchmail` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `mailbox` varchar(255) NOT NULL,
+  `src_server` varchar(255) NOT NULL,
+  `src_auth` enum('password','kerberos_v5','kerberos','kerberos_v4','gssapi','cram-md5','otp','ntlm','msn','ssh','any') CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `src_user` varchar(255) NOT NULL,
+  `src_password` varchar(255) NOT NULL,
+  `src_folder` varchar(255) NOT NULL,
+  `poll_time` int(11) unsigned NOT NULL DEFAULT '10',
+  `fetchall` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `keep` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `protocol` enum('POP3','IMAP','POP2','ETRN','AUTO') CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `usessl` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `extra_options` text,
+  `returned_text` text,
+  `mda` varchar(255) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `log` (
+  `timestamp` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `username` varchar(255) NOT NULL,
+  `domain` varchar(255) NOT NULL,
+  `action` varchar(255) NOT NULL,
+  `data` text NOT NULL,
+  KEY `timestamp` (`timestamp`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Postfix Admin - Log';
 
-{% for virtual_domain in mail_virtual_domains %}
-INSERT INTO virtual_domains (`name`)
-VALUES (
-       "{{ virtual_domain.name }}"
-);
-{% endfor %}
+CREATE TABLE `mailbox` (
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8 NOT NULL,
+  `maildir` varchar(255) NOT NULL,
+  `quota` bigint(20) NOT NULL DEFAULT '0',
+  `local_part` varchar(255) NOT NULL,
+  `domain` varchar(255) NOT NULL,
+  `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`username`),
+  KEY `domain` (`domain`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Postfix Admin - Virtual Mailboxes';
 
-{% for virtual_user in mail_virtual_users %}
-INSERT INTO virtual_users (`domain_id`, `password`, `email`)
-VALUES (
-       (select id from virtual_domains where name='{{ domain }}'),
-       sha2('{{ virtual_user.password_hash }}', 512),
-       "{{ virtual_user.account }}@{{ virtual_user.domain }}"
-);
-{% endfor %}
+CREATE TABLE `quota` (
+  `username` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `path` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `current` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`username`,`path`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-{% if mail_virtual_aliases is defined %}
-{% for virtual_alias in mail_virtual_aliases %}
-INSERT INTO virtual_aliases (`domain_id`, `source`, `destination`)
-VALUES (
-       (select id from virtual_domains where name='{{ domain }}'),
-       "{{ virtual_alias.source }}",
-       "{{virtual_alias.destination }}"
-);
-{% endfor %}
-{% endif %}
+CREATE TABLE `quota2` (
+  `username` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `bytes` bigint(20) NOT NULL DEFAULT '0',
+  `messages` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `vacation` (
+  `email` varchar(255) NOT NULL,
+  `subject` varchar(255) CHARACTER SET utf8 NOT NULL,
+  `body` text CHARACTER SET utf8 NOT NULL,
+  `cache` text NOT NULL,
+  `domain` varchar(255) NOT NULL,
+  `created` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`email`),
+  KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Postfix Admin - Virtual Vacation';
+
+CREATE TABLE `vacation_notification` (
+  `on_vacation` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `notified` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `notified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`on_vacation`,`notified`),
+  CONSTRAINT `vacation_notification_pkey` FOREIGN KEY (`on_vacation`) REFERENCES `vacation` (`email`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Postfix Admin - Virtual Vacation Notifications';
+
+INSERT INTO admin (username,password,created,modified,active) VALUES ('{{ main_user_name }}@{{ domain }}','$1$49e9b488$rFv1HnlywknypTGmYAepO1','2015-05-01 18:26:44','2015-05-01 18:26:44','1');
+INSERT INTO alias (address,goto,domain,created,modified,active) VALUES ('{{ main_user_name }}@{{ domain }}','{{ main_user_name }}@{{ domain }}','{{ domain }}','2015-05-01 18:28:18','2015-05-01 18:28:18','1');
+INSERT INTO config (id,name,value) VALUES ('1','version','740');
+INSERT INTO domain (domain,description,aliases,mailboxes,maxquota,quota,transport,backupmx,created,modified,active) VALUES ('ALL','','0','0','0','0','','0','0000-00-00 00:00:00','0000-00-00 00:00:00','1');
+INSERT INTO domain (domain,description,aliases,mailboxes,maxquota,quota,transport,backupmx,created,modified,active) VALUES ('{{ domain }}','Domaine principal du serveur','10','0','10','0','virtual','0','2015-05-01 18:27:31','2015-05-01 18:27:31','1');
+INSERT INTO domain_admins (username,domain,created,active) VALUES ('{{ main_user_name }}@{{ domain }}','ALL','2015-05-01 18:26:44','1');
+INSERT INTO log (timestamp,username,domain,action,data) VALUES ('2015-05-01 18:28:18','{{ main_user_name }}@{{ domain }} (172.16.100.1)','{{ domain }}','create_mailbox','{{ main_user_name }}@{{ domain }}');
+INSERT INTO mailbox (username,password,name,maildir,quota,local_part,domain,created,modified,active) VALUES ('{{ main_user_name }}@{{ domain }}','$1$a05ede1c$5Zu37ym8jMAxJ2XQMCxaZ/','Nicolas L.','{{ main_user_name }}@{{ domain }}/','0','nicolas','{{ domain }}','2015-05-01 18:28:18','2015-05-01 18:28:18','1');

@@ -1,5 +1,6 @@
 ---
   - name: install mysql-server
+<<<<<<< Updated upstream
     action: apt name=mysql-server
     register: test_install
 
@@ -14,6 +15,10 @@
   - name: delete mysql_secure_installation
     action: file dest=/tmp/mysql_secure_installation state=absent
     when: test_install.changed
+=======
+    action: apt name=mysql-server state=installed
+    notify: mysql_secure_installation
+>>>>>>> Stashed changes
 
   - name: write conf.d/mysqld.cnf
     action: template src=mysqld.cnf.j2 dest=/etc/mysql/conf.d/mysqld.cnf
@@ -22,6 +27,30 @@
   - name: write conf.d/client.cnf
     action: template src=client.cnf.j2 dest=/etc/mysql/conf.d/client.cnf
     notify: restart mysql
+<<<<<<< Updated upstream
+=======
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/dbconfig-install' value='true' vtype='boolean'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/db/app-user' value='phpmyadmin' vtype='string'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/db/dbname' value='phpmyadmin' vtype='string'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/mysql/method' value='unix socket' vtype='string'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/mysql/admin-user' value='root' vtype='string'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/mysql/admin-pass' value='{{mysql_root_password}}' vtype='password'
+
+  - name: debconf for pma
+    debconf: name=phpmyadmin question='phpmyadmin/mysql/app-pass' value='{{mysql_root_password}}' vtype='password'
+>>>>>>> Stashed changes
 
   - name: restart mysql
     action: service name=mysql state=restarted enabled=yes

@@ -39,6 +39,9 @@
 #   copy: src=etc_postfix_master.cf dest=/etc/postfix/master.cf owner=root group=root
 #   notify: restart postfix
 
+- name: Create virtual configuration folders
+  file: path=/etc/postfix/virtual state=directory owner=root group=root
+
 - name: Copy additional postfix configuration files
   template: src={{ item }}.j2 dest=/etc/postfix/virtual/{{ item }} owner=root group=root
   with_items:

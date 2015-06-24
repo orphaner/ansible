@@ -1,0 +1,8 @@
+- name: Install Postfixadmin
+  apt: pkg=postfixadmin state=installed
+
+- name: Copy postfixadmin configuration files
+  template: src=postfixadmin/{{ item }}.j2 dest=/etc/postfixadmin/{{ item }} owner=root group=www-data
+  with_items:
+    - config.inc.php
+    - dbconfig.inc.php

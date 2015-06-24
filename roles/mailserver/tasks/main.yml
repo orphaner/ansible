@@ -1,5 +1,6 @@
 - include: postfix.yml tags=postfix
 - include: dovecot.yml tags=dovecot
+- include: postfixadmin.yml tags=postfixadmin
 - include: opendkim.yml tags=opendkim
 #- include: spamassassin.yml tags=spamassassin
 #- include: solr.yml tags=solr

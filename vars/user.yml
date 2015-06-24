@@ -17,16 +17,15 @@ mysqld:
 mysql_root_password: password
 db_admin_password: "{{ mysql_root_password }}"
 
-# ircbouncer
-irc_nick: TODO
-irc_ident: TODO
-irc_realname: TODO
-irc_quitmsg: TODO
-irc_password_hash: TODO
-irc_password_salt: TODO
-irc_timezone: TODO      #Example: "America/New_York"
-
 # mailserver
+mail_server_hostname: "mail.{{ domain }}"
+mail_server_autoconfig_hostname: "autoconfig.{{ domain }}"
+mail_db_username: mailserver
+# mail_db_password: (required)
+mail_db_database: mailserver
+# mail_virtual_domains: (required)
+# mail_virtual_users: (required)
+# mail_virtual_aliases: (required)
 mail_db_password: mailserver
 mail_virtual_domains:
   - name: "{{ domain }}"

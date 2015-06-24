@@ -45,25 +45,6 @@ google_auth_version: 1.0
 db_admin_username: 'root'
 # db_admin_password: (required)
 
-# ircbouncer
-znc_version: 1.4
-# irc_nick: (required)
-# irc_ident: (required)
-# irc_realname: (required)
-# irc_quitmsg: (required)
-# irc_password_hash: (required)
-# irc_password_salt: (required)
-
-# mailserver
-mail_server_hostname: "mail.{{ domain }}"
-mail_server_autoconfig_hostname: "autoconfig.{{ domain }}"
-mail_db_username: mailserver
-# mail_db_password: (required)
-mail_db_database: mailserver
-# mail_virtual_domains: (required)
-# mail_virtual_users: (required)
-# mail_virtual_aliases: (required)
-
 # z-push
 zpush_version: 2.1.1-1788
 

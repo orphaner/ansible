@@ -6,8 +6,6 @@
 
 # common
 domain: biroute.org
-main_user_name: nicolas
-encfs_password: password
 
 # mysql
 mysql_utf8: true

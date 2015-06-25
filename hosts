@@ -1,2 +1,5 @@
-[local]
+[biroute]
 biroute.org
+
+[grafana]
+dede.org

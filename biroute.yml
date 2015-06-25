@@ -1,11 +1,12 @@
 ---
 # This is the top-level playbook that defines our entire infrastructure.
 
-- hosts: all
+- hosts: biroute
   user: deploy
   sudo: True
   gather_facts: True
   vars_files:
+    - vars/common.yml
     - vars/defaults.yml
     - vars/user.yml
 

@@ -14,7 +14,7 @@
 - name: Install necessities and nice-to-haves
   apt: pkg={{ item }} state=installed
   with_items:
-    - apache2
+#    - apache2
     - apt-transport-https
     - apticron
     #- build-essential
@@ -35,7 +35,6 @@
     #- update-notifier-common
     - vim
     - weechat
-    - zsh
 
 - name: Set timezone to UTC
   action: shell echo Europe/Paris > /etc/timezone
@@ -56,24 +55,17 @@
 #   command: a2dissite 000-default removes=/etc/apache2/sites-enabled/000-default
 #   notify: restart apache
 
-- name: Enable Apache headers module
-  command: a2enmod headers creates=/etc/apache2/mods-enabled/headers.load
-  notify: restart apache
+#- name: Enable Apache headers module
+#  command: a2enmod headers creates=/etc/apache2/mods-enabled/headers.load
+#  notify: restart apache
 
-- name: Set ServerName for Apache
-  template: src=fqdn.j2 dest=/etc/apache2/conf-available/fqdn.conf
+#- name: Set ServerName for Apache
+#  template: src=fqdn.j2 dest=/etc/apache2/conf-available/fqdn.conf
 
-- name: Enable override configurations
-  command: a2enconf fqdn
-  notify: restart apache
+#- name: Enable override configurations
+#  command: a2enconf fqdn
+#  notify: restart apache
 
-#- name: Create decrypted directory (even if encfs is not used)
-#  file: state=directory path=/decrypted
-
-#- name: Set decrypted directory permissions
-#  file: state=directory path=/decrypted group=mail mode=775
-
-#- include: encfs.yml tags=encfs
 - include: users.yml tags=users
 #- include: ssl.yml tags=ssl
 - include: ufw.yml tags=ufw

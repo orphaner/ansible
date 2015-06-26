@@ -1,14 +1,18 @@
-main_user_name: nicolas
-domain: dede.org
-main_user_shell: "/bin/bash"
-friendly_networks:
-  - ""
-admin_email:
+# Common
+common:
+  domain: dede.org
+  admin_email:
+  main_user_name: nicolas
+  main_user_shell: "/bin/bash"
+  # Networks not to ban or reject
+  friendly_networks:
+    - ""
 
-  # ssh
-kex_algorithms: "diffie-hellman-group-exchange-sha256"
-ciphers: "aes256-ctr,aes192-ctr,aes128-ctr"
-macs: "hmac-sha2-512,hmac-sha2-256,hmac-ripemd160"
+# ssh
+ssh:
+  kex_algorithms: "diffie-hellman-group-exchange-sha256"
+  ciphers: "aes256-ctr,aes192-ctr,aes128-ctr"
+  macs: "hmac-sha2-512,hmac-sha2-256,hmac-ripemd160"
 
 # ntp
 ntp_servers:

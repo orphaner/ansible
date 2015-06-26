@@ -1,9 +1,8 @@
-    Ciphers {{ ciphers }}
-    KexAlgorithms {{ kex_algorithms }}
+    Ciphers {{ ssh.ciphers }}
+    KexAlgorithms {{ ssh.kex_algorithms }}
     SendEnv LANG LC_*
     HashKnownHosts yes
     GSSAPIAuthentication yes
     GSSAPIDelegateCredentials no
-    MACs {{ macs }}
+    MACs {{ ssh.macs }}
     PasswordAuthentication no
-

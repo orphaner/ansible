@@ -1,0 +1,8 @@
+---
+# vars file for java
+
+java:
+  download_url: 'http://download.oracle.com/otn-pub/java/jdk/8u45-b14/jdk-8u45-linux-x64.tar.gz'
+  download_path: /tmp
+  install_path: /opt
+  root_archive: jdk1.8.0_45

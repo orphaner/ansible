@@ -13,5 +13,6 @@
 
   roles:
     - common
+    - { role : java, tags: ['java'] }
     #- { role : grafana, tags: ['grafana'] }
   #- { role : mailserver, tags: ['mailserver'] }

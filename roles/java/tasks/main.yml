@@ -1,0 +1,13 @@
+---
+# tasks file for java
+- name: Get JDK tarball
+  shell: " if [ ! -f {{ java.download_path }}/{{ java.download_url | basename }} ] ; then curl -L -H 'Cookie:oraclelicense=accept-securebackup-cookie' {{ java.download_url }} -o {{ java.download_path }}/{{ java.download_url | basename }} ; fi"
+
+- name: Create java group
+  group: name=java
+
+- name: Unzip tarball
+  unarchive: src={{ java.download_path }}/{{ java.download_url | basename }} dest={{ java.install_path }} copy=no
+
+- name: Set owner and group recursively
+  file: path={{ java.install_path}}/{{ java.root_archive }} owner=root group=java recurse=true
